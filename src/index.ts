@@ -1,18 +1,39 @@
-import express, { Express, Request, Response, Application } from "express";
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
-import routes from "./src/routes/routes";
-import "./app/config/core/Injector";
-//For env File
-dotenv.config();
+import * as bodyParser from "body-parser";
+import "reflect-metadata";
+import { InversifyExpressServer } from "inversify-express-utils";
+import { container } from "./config/inversify.config";
+import * as morgan from "morgan";
+import * as express from "express";
 
-const app: Application = express();
-const port = process.env.PORT || 8000;
+let expressApp = express();
+expressApp.use(bodyParser.json());
+expressApp.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/api", routes);
+const server = new InversifyExpressServer(
+  container,
+  null,
+  {
+    rootPath: "/api/",
+  },
+  expressApp
+);
 
-app.listen(port, () => {
-  console.log(`Server is Fire at http://localhost:${port}/api`);
+server.setConfig((app) => {
+  var logger = morgan("combined");
+  app.use(logger);
 });
+
+server.setConfig((app) => {
+  var logger = morgan("combined");
+  app.use(logger);
+});
+
+server.setErrorConfig((app) => {
+  app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send("Something broke!");
+  });
+});
+
+let app = server.build();
+app.listen(process.env.PORT || 9200);
