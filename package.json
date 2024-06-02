@@ -1,0 +1,24 @@
+{
+  "name": "api-express-interview",
+  "version": "1.0.0",
+  "description": "only for evaluation interview",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bryan Granado",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "inversify": "^6.0.2",
+    "reflect-metadata": "^0.2.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.13.0",
+    "eslint": "^9.4.0",
+    "nodemon": "^3.1.2",
+    "typescript": "^5.4.5"
+  }
+}
