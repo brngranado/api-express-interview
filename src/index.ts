@@ -23,11 +23,6 @@ server.setConfig((app) => {
   app.use(logger);
 });
 
-server.setConfig((app) => {
-  var logger = morgan("combined");
-  app.use(logger);
-});
-
 server.setErrorConfig((app) => {
   app.use((err, req, res, next) => {
     console.error(err.stack);
