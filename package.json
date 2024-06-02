@@ -4,14 +4,18 @@
   "description": "only for evaluation interview",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
   },
   "author": "Bryan Granado",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.20.2",
+    "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "inversify": "^6.0.2",
+    "inversify-express-utils": "^6.4.6",
+    "morgan": "^1.10.0",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
@@ -19,6 +23,7 @@
     "@types/node": "^20.13.0",
     "eslint": "^9.4.0",
     "nodemon": "^3.1.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5"
   }
 }
