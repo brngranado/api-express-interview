@@ -1,6 +1,5 @@
 import { CreateUser, UpdateUser } from "./interfaces/user.interface";
 import { injectable, inject } from "inversify";
-import { User } from "../models/user.entity";
 import { FirestoreDb } from "../config/db.config";
 import { TYPES } from "../controllers/types";
 
