@@ -53,7 +53,7 @@ export default class UserController extends BaseHttpController {
   }
 
   @Delete("/:id")
-  public async delete(@requestParam("id") id: number) {
+  public async delete(@requestParam("id") id: string) {
     const user = this.userService.delete(id);
     return user;
   }
