@@ -41,13 +41,13 @@ export default class TaskController extends BaseHttpController {
   }
 
   @Get("/:id")
-  public async findOne(@requestParam("id") id: number) {
+  public async findOne(@requestParam("id") id: string) {
     const user = this.taskService.findOne(id);
     return user;
   }
 
   @Put("/:id")
-  public async update(@requestParam("id") id: number, @Body() body: TaskDto) {
+  public async update(@requestParam("id") id: string, @Body() body: TaskDto) {
     const user = this.taskService.update(id, body);
     return user;
   }

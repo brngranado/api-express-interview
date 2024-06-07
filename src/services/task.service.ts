@@ -1,61 +1,81 @@
 import { CreateUser, UpdateUser } from "./interfaces/user.interface";
-import { injectable } from "inversify";
-import { Task } from "../models/task.entity";
+import { injectable, inject } from "inversify";
 import { CreateTask, UpdateTask } from "./interfaces/task.interface";
+import { FirestoreDb } from "../config/db.config";
+import { TYPES } from "../controllers/types";
 
 @injectable()
 class TaskService {
-  constructor() {}
-  findAll() {
-    return [
-      {
-        id: 1,
-        title: "first task",
-        content: "a task to execute",
-      },
-      {
-        id: 2,
-        title: "second task",
-        content: "another task to execute",
-      },
-    ];
+  private firestoreDb: FirestoreDb;
+
+  constructor(@inject(TYPES.FirestoreDb) firestoreDb: FirestoreDb) {
+    this.firestoreDb = firestoreDb;
+  }
+  async findAll() {
+    const db = await this.firestoreDb.connect();
+    const tasksCollection = await db.collection("tasks").get();
+    return tasksCollection.docs.map((doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
+    });
   }
 
-  findOne(id: number) {
-    console.log("llega a get servicio", id);
-    const infofake = [
-      {
-        id: 1,
-        title: "first task",
-        content: "a task to execute",
-      },
-      {
-        id: 2,
-        title: "second task",
-        content: "another task to execute",
-      },
-    ];
+  async findOne(id: string) {
+    const db = await this.firestoreDb.connect();
+    const tasksCollection = db.collection("tasks");
+    const snapshot = await tasksCollection.doc(id).get();
 
-    return infofake.find((todo) => +todo.id === +id);
+    if (snapshot.exists) {
+      return {
+        id: snapshot.id,
+        ...snapshot.data(),
+      };
+    } else {
+      return null;
+    }
   }
 
-  create(create: CreateTask) {
-    return create;
-    // Lógica para crear una suscripcion
+  async create(create: CreateTask) {
+    const db = await this.firestoreDb.connect();
+    const tasksCollection = await db.collection("tasks");
+    const getData = await tasksCollection.add({
+      ...create,
+    });
+    return getData.id;
   }
 
-  update(id: number, update: UpdateTask) {
-    return {
-      id: id,
-      ...update,
-    };
+  async update(id: string, update: UpdateTask) {
+    const db = await this.firestoreDb.connect();
+    const tasksCollection = await db.collection("tasks");
+    const taskDoc = await tasksCollection.doc(id.toString()).get();
+    if (taskDoc.exists) {
+      await tasksCollection.doc(id.toString()).update({
+        ...update,
+      });
+      return {
+        id: id,
+        ...update,
+      };
+    } else {
+      throw new Error("Task not found");
+    }
   }
 
-  delete(id: number) {
-    return {
-      id: id,
-      message: "deleted task",
-    };
+  async delete(id: string) {
+    const db = await this.firestoreDb.connect();
+    const tasksCollection = await db.collection("tasks");
+    const userDoc = await tasksCollection.doc(id.toString()).get();
+    if (userDoc.exists) {
+      await tasksCollection.doc(id.toString()).delete();
+      return {
+        id: id,
+        message: "deleted",
+      };
+    } else {
+      throw new Error("Task not found");
+    }
   }
 }
 

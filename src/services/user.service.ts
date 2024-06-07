@@ -13,7 +13,12 @@ class UserService {
   async findAll() {
     const db = await this.firestoreDb.connect();
     const userCollection = await db.collection("users").get();
-    return userCollection.docs.map((doc) => doc.data());
+    return userCollection.docs.map((doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
+    });
   }
 
   async findOne(email: string) {
@@ -37,7 +42,7 @@ class UserService {
     return getData.id;
   }
 
-  async update(id: number, update: UpdateUser) {
+  async update(id: string, update: UpdateUser) {
     const db = await this.firestoreDb.connect();
     const userCollection = await db.collection("users");
     const userDoc = await userCollection.doc(id.toString()).get();

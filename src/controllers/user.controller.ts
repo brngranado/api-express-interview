@@ -47,7 +47,7 @@ export default class UserController extends BaseHttpController {
   }
 
   @Put("/:id")
-  public async update(@requestParam("id") id: number, @Body() body: UserDto) {
+  public async update(@requestParam("id") id: string, @Body() body: UserDto) {
     const user = this.userService.update(id, body);
     return user;
   }
