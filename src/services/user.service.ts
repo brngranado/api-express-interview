@@ -21,7 +21,7 @@ class UserService {
     });
   }
 
-  async findOne(email: string) {
+  async findOne(email: string): Promise<any> {
     const db = await this.firestoreDb.connect();
     const userCollection = await db.collection("users");
     const query = await userCollection.where("email", "==", email).get();

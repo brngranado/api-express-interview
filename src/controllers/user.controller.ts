@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import * as express from "express";
 import { injectable, inject } from "inversify";
 import {
   interfaces,
@@ -13,10 +13,12 @@ import {
   response,
   requestParam,
   BaseHttpController,
+  Middleware,
 } from "inversify-express-utils";
 import UserService from "../services/user.service";
 import { TYPES } from "../controllers/types";
 import { UserDto } from "./dto/user.dto";
+import { UseAuthMiddleware } from "./middleware/auth.middleware";
 
 @controller("/users")
 export default class UserController extends BaseHttpController {
@@ -35,25 +37,33 @@ export default class UserController extends BaseHttpController {
   }
 
   @Get("/")
+  @UseAuthMiddleware()
   public async findAll() {
     const users = this.userService.findAll();
     return users;
   }
 
   @Get("/:email")
-  public async findOne(@requestParam("email") email: string) {
+  @UseAuthMiddleware()
+  public async findOne(@request() req: express.Request) {
+    const { email } = req.params;
     const user = this.userService.findOne(email);
-    return user;
+
+    return this.json(user, 200);
   }
 
   @Put("/:id")
-  public async update(@requestParam("id") id: string, @Body() body: UserDto) {
+  @UseAuthMiddleware()
+  public async update(@request() req: express.Request, @Body() body: UserDto) {
+    const { id } = req.params;
     const user = this.userService.update(id, body);
     return user;
   }
 
   @Delete("/:id")
-  public async delete(@requestParam("id") id: string) {
+  @UseAuthMiddleware()
+  public async delete(@request() req: express.Request) {
+    const { id } = req.params;
     const user = this.userService.delete(id);
     return user;
   }
