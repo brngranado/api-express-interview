@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import * as express from "express";
 import { injectable, inject } from "inversify";
 import {
   interfaces,
@@ -14,10 +14,10 @@ import {
   requestParam,
   BaseHttpController,
 } from "inversify-express-utils";
-import UserService from "../services/user.service";
 import { TYPES } from "../controllers/types";
 import { TaskDto } from "./dto/task.dto";
 import TaskService from "../services/task.service";
+import { UseAuthMiddleware } from "./middleware/auth.middleware";
 
 @controller("/tasks")
 export default class TaskController extends BaseHttpController {
@@ -29,32 +29,40 @@ export default class TaskController extends BaseHttpController {
   }
 
   @Post("/")
-  public async create(@Body() body: TaskDto) {
+  @UseAuthMiddleware()
+  public async create(@request() req: express.Request, @Body() body: TaskDto) {
     const task = this.taskService.create(body);
     return task;
   }
 
   @Get("/")
+  @UseAuthMiddleware()
   public async findAll() {
-    const users = this.taskService.findAll();
-    return users;
+    const tasks = this.taskService.findAll();
+    return tasks;
   }
 
   @Get("/:id")
-  public async findOne(@requestParam("id") id: number) {
-    const user = this.taskService.findOne(id);
-    return user;
+  @UseAuthMiddleware()
+  public async findOne(@request() req: express.Request) {
+    const { id } = req.params;
+    const task = this.taskService.findOne(id);
+    return task;
   }
 
   @Put("/:id")
-  public async update(@requestParam("id") id: number, @Body() body: TaskDto) {
-    const user = this.taskService.update(id, body);
-    return user;
+  @UseAuthMiddleware()
+  public async update(@request() req: express.Request, @Body() body: TaskDto) {
+    const { id } = req.params;
+    const task = this.taskService.update(id, body);
+    return task;
   }
 
   @Delete("/:id")
-  public async delete(@requestParam("id") id: number) {
-    const user = this.taskService.delete(id);
-    return user;
+  @UseAuthMiddleware()
+  public async delete(@request() req: express.Request) {
+    const { id } = req.params;
+    const task = this.taskService.delete(id);
+    return task;
   }
 }

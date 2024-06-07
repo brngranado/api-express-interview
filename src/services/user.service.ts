@@ -1,6 +1,5 @@
 import { CreateUser, UpdateUser } from "./interfaces/user.interface";
 import { injectable, inject } from "inversify";
-import { User } from "../models/user.entity";
 import { FirestoreDb } from "../config/db.config";
 import { TYPES } from "../controllers/types";
 
@@ -14,10 +13,15 @@ class UserService {
   async findAll() {
     const db = await this.firestoreDb.connect();
     const userCollection = await db.collection("users").get();
-    return userCollection.docs.map((doc) => doc.data());
+    return userCollection.docs.map((doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
+    });
   }
 
-  async findOne(email: string) {
+  async findOne(email: string): Promise<any> {
     const db = await this.firestoreDb.connect();
     const userCollection = await db.collection("users");
     const query = await userCollection.where("email", "==", email).get();
@@ -38,7 +42,7 @@ class UserService {
     return getData.id;
   }
 
-  async update(id: number, update: UpdateUser) {
+  async update(id: string, update: UpdateUser) {
     const db = await this.firestoreDb.connect();
     const userCollection = await db.collection("users");
     const userDoc = await userCollection.doc(id.toString()).get();
