@@ -36,25 +36,25 @@ export default class TaskController extends BaseHttpController {
 
   @Get("/")
   public async findAll() {
-    const users = this.taskService.findAll();
-    return users;
+    const tasks = this.taskService.findAll();
+    return tasks;
   }
 
   @Get("/:id")
   public async findOne(@requestParam("id") id: string) {
-    const user = this.taskService.findOne(id);
-    return user;
+    const task = this.taskService.findOne(id);
+    return task;
   }
 
   @Put("/:id")
   public async update(@requestParam("id") id: string, @Body() body: TaskDto) {
-    const user = this.taskService.update(id, body);
-    return user;
+    const task = this.taskService.update(id, body);
+    return task;
   }
 
   @Delete("/:id")
-  public async delete(@requestParam("id") id: number) {
-    const user = this.taskService.delete(id);
-    return user;
+  public async delete(@requestParam("id") id: string) {
+    const task = this.taskService.delete(id);
+    return task;
   }
 }
