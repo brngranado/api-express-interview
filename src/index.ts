@@ -5,10 +5,18 @@ import { InversifyExpressServer } from "inversify-express-utils";
 import { container } from "./config/inversify.config";
 import * as morgan from "morgan";
 import * as express from "express";
+import * as cors from "cors";
 
 let expressApp = express();
 expressApp.use(bodyParser.json());
 expressApp.use(bodyParser.urlencoded({ extended: true }));
+expressApp.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    headers: ["Content-Type", "Authorization"],
+  })
+);
 
 const server = new InversifyExpressServer(
   container,
