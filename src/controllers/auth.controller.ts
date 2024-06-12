@@ -28,4 +28,17 @@ export class AuthController {
 
     return { token };
   }
+
+  @Post("/signup")
+  async signup(@Body() loginRequest: UserDto) {
+    const { email, password, name } = loginRequest;
+    const user = await this.userService.create({ email, password, name });
+    if (!user) {
+      throw new Error("Cant process signup");
+    }
+    const userFind = await this.userService.findOne(email);
+    const token = this.authService.generateToken(userFind);
+
+    return { token };
+  }
 }
