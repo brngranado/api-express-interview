@@ -3,6 +3,7 @@ import { injectable, inject } from "inversify";
 import { CreateTask, UpdateTask } from "./interfaces/task.interface";
 import { FirestoreDb } from "../config/db.config";
 import { TYPES } from "../controllers/types";
+import { json } from "body-parser";
 
 @injectable()
 class TaskService {
@@ -43,7 +44,9 @@ class TaskService {
     const getData = await tasksCollection.add({
       ...create,
     });
-    return getData.id;
+    return {
+      id: getData.id,
+    };
   }
 
   async update(id: string, update: UpdateTask) {
